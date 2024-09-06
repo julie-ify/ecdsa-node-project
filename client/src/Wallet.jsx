@@ -1,6 +1,8 @@
 import server from './server';
 import { secp256k1 } from 'ethereum-cryptography/secp256k1.js';
-import { toHex } from 'ethereum-cryptography/utils.js';
+import { bytesToHex as toHex } from 'ethereum-cryptography/utils.js';
+import { useEffect, useState } from 'react';
+import { getAddress } from './util';
 
 function Wallet({
 	address,
@@ -10,22 +12,32 @@ function Wallet({
 	balance,
 	setBalance,
 }) {
+	const [walletAddress, setWalletAddress] = useState('');
+
+	useEffect(() => {
+		async function fetchBalance() {
+			if (address) {
+				const {
+					data: { balance },
+				} = await server.get(`balance/${address}`);
+				setBalance(balance);
+			} else {
+				setBalance(0);
+			}
+		}
+		fetchBalance();
+	}, [address]);
+
 	async function onChange(evt) {
 		const privateKey = evt.target.value;
 		setPrivateKey(privateKey);
 
-		// publickey is referred to as address
-		const address = toHex(secp256k1.getPublicKey(privateKey));
-		setAddress(address);
-
-		if (address) {
-			const {
-				data: { balance },
-			} = await server.get(`balance/${address}`);
-			setBalance(balance);
-		} else {
-			setBalance(0);
-		}
+		// public key is derived from the private key
+		const publicKey = secp256k1.getPublicKey(privateKey);
+		// wallet address is derived from the public key
+		const walletAddress = getAddress(publicKey);
+		setWalletAddress(walletAddress);
+		setAddress(toHex(publicKey));
 	}
 
 	return (
@@ -40,7 +52,9 @@ function Wallet({
 					onChange={onChange}
 				></input>
 			</label>
-			<div>public key: {address.slice(0, 10)}...</div>
+			{walletAddress && (
+				<code>Wallet Address: {walletAddress}</code>
+			)}
 			<div className="balance">Balance: {balance}</div>
 		</div>
 	);

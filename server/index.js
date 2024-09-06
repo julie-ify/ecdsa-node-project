@@ -8,10 +8,11 @@ const { hashMessage, setInitialBalance } = require('./util');
 app.use(cors());
 app.use(express.json());
 
+// public keys linked to their wallet balances
 const balances = {
-	'038d22de5b2be9685c32214a1f2182d15624fdec582fc3a2782bd67bdafb3cb372': 100,
-	'020425743e27f6df6dc474bd60d8762b497d3abaa4af149983f70575510709be59': 50,
-	'03b5604d3b9b5bc219c753de7980317c9ef425aa2c241fa6697a64b9f4b1858ee5': 75,
+	'035d6995e02475ef2acf2664f60f95b25b0436dc68e69066bef86a70f87a5fb777': 100,
+	'0295a5d8b7d2b9e87b42793d08816fbd22c4ca42db5bf607dea40db87f00de3696': 50,
+	'029335cf0251ffde6c70f7a39f898ff53539d4fde7f1e9301a3a0b909db49f384a': 75,
 };
 
 app.get('/balance/:address', (req, res) => {
@@ -51,9 +52,7 @@ app.post('/send', (req, res) => {
 		}
 	} catch (ex) {
 		console.error('Server-side error:', ex.message);
-		res
-			.status(500)
-			.send({ message: 'Internal Server Error' });
+		res.status(500).send({ message: 'Internal Server Error' });
 	}
 });
 

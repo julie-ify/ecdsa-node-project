@@ -4,7 +4,7 @@ import { secp256k1 } from 'ethereum-cryptography/secp256k1.js';
 import { bytesToHex as toHex } from 'ethereum-cryptography/utils.js';
 import { hashMessage } from './util';
 
-function Transfer({ address, setBalance, privateKey }) {
+function Transfer({ setBalance, privateKey }) {
 	const [sendAmount, setSendAmount] = useState('');
 	const [recipient, setRecipient] = useState('');
 
@@ -46,6 +46,7 @@ function Transfer({ address, setBalance, privateKey }) {
 					placeholder="1, 2, 3..."
 					value={sendAmount}
 					onChange={setValue(setSendAmount)}
+					required
 				></input>
 			</label>
 
@@ -55,6 +56,7 @@ function Transfer({ address, setBalance, privateKey }) {
 					placeholder="Type an address, for example: 0x2"
 					value={recipient}
 					onChange={setValue(setRecipient)}
+					required
 				></input>
 			</label>
 
